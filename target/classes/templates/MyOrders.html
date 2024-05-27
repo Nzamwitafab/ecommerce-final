@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::Layout(~{::body})">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+</head>
+<body>
+<section class="container mt-5">
+    <h1 class="text-center mb-4">My Orders</h1>
+    <div th:if="${orders.empty}">
+        <p class="text-center">You have no orders.</p>
+    </div>
+    <div th:if="${!orders.empty}" class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${#dates.format(order.addedDate, 'dd-MM-yyyy')}"></td>
+                    <td th:text="${order.orderStatus}"></td>
+                    <td th:text="${order.totalPrice}"></td>
+                    <td>
+                        <form th:if="${order.orderStatus == 'Pending'}" th:action="@{/cancelOrder}" method="post">
+                            <input type="hidden" name="orderId" th:value="${order.id}" />
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel Order</button>
+                        </form>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    function cancelOrder(orderId) {
+        const confirmed = confirm("Are you sure you want to cancel this order?");
+        if (confirmed) {
+            window.location.href = '/cancelOrder?orderId=' + orderId;
+        }
+    }
+</script>
+</body>
+</html>
